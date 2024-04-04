@@ -1,0 +1,12 @@
+---
+triple:          'arm64-apple-darwin'
+binary-path:     '/Users/yurigetaruck/Documents/faculdade/TCC/sprits_c/bibliotecas/output/main'
+relocations:
+  - { offsetInCU: 0x26, offset: 0x26, size: 0x8, addend: 0x0, symName: _calcularDistancia, symObjAddr: 0x0, symBinAddr: 0x1000034B4, symSize: 0xA4 }
+  - { offsetInCU: 0x42, offset: 0x42, size: 0x8, addend: 0x0, symName: _calcularDistancia, symObjAddr: 0x0, symBinAddr: 0x1000034B4, symSize: 0xA4 }
+  - { offsetInCU: 0x86, offset: 0x86, size: 0x8, addend: 0x0, symName: _calcularDistanciaTotal, symObjAddr: 0xA4, symBinAddr: 0x100003558, symSize: 0xDC }
+  - { offsetInCU: 0xE6, offset: 0xE6, size: 0x8, addend: 0x0, symName: _encontrarProximoPontoMaisProximo, symObjAddr: 0x180, symBinAddr: 0x100003634, symSize: 0x104 }
+  - { offsetInCU: 0x18C, offset: 0x18C, size: 0x8, addend: 0x0, symName: _algoritmoGulosoVizinhoMaisProximo, symObjAddr: 0x284, symBinAddr: 0x100003738, symSize: 0x144 }
+  - { offsetInCU: 0x22E, offset: 0x22E, size: 0x8, addend: 0x0, symName: _lerCoordenadas, symObjAddr: 0x3C8, symBinAddr: 0x10000387C, symSize: 0x1D4 }
+  - { offsetInCU: 0x2D4, offset: 0x2D4, size: 0x8, addend: 0x0, symName: _main, symObjAddr: 0x59C, symBinAddr: 0x100003A50, symSize: 0x318 }
+...
