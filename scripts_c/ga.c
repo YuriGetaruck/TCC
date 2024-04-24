@@ -159,23 +159,6 @@ void mutate(Individual *individual)
             end--;
         }
     }
-    mutate_reverse_subpath(individual);
-}
-
-void mutate_reverse_subpath(Individual *individual)
-{
-    if ((double)rand() / RAND_MAX < MUTATION_RATE)
-    {
-        int num_reversals = rand() % 3 + 1; // Escolha aleatoriamente entre 1, 2 ou 3 índices para inverter
-        for (int i = 0; i < num_reversals; i++)
-        {
-            int start = rand() % (N - 2) + 1; // Ignorar o ponto de partida e o último ponto
-            int end = start + 1;
-            int temp = individual->path[start];
-            individual->path[start] = individual->path[end];
-            individual->path[end] = temp;
-        }
-    }
 }
 
 // Evolui a população por uma geração e verifica o critério de parada
