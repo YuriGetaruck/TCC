@@ -2,12 +2,13 @@
 #include <stdlib.h>
 #include <math.h>
 #include <stdbool.h>
+#include <string.h>
 
 #define N 100                // número de pontos 3D
 #define POP_SIZE 30          // tamanho da população
-#define MUTATION_RATE 0.05   // taxa de mutação
+#define MUTATION_RATE 0.08   // taxa de mutação
 #define ITERATIONS 1000000   // número de iterações
-#define TARGET_DISTANCE 1700 // valor específico para o critério de parada
+#define TARGET_DISTANCE 1800 // valor específico para o critério de parada
 
 // Estrutura para representar um ponto 3D
 typedef struct
@@ -137,11 +138,45 @@ Individual crossover(Individual parent1, Individual parent2, Point *points)
     return child;
 }
 
+// Realiza mutação por deslocamento simples em um indivíduo
+void mutate_deslocamento_simples(Individual *individual)
+{
+    if ((double)rand() / RAND_MAX < MUTATION_RATE)
+    {
+        int start = rand() % (N - 1) + 1;  // Ignorar o ponto de partida
+        int length = rand() % (N - start); // Comprimento do deslocamento
+
+        int temp[N];
+        memcpy(temp, individual->path, sizeof(temp)); // Copia o caminho atual
+
+        // Desloca a sub-rota em 'length' posições
+        for (int i = 0; i < length; i++)
+            individual->path[start + i] = temp[start + length - i - 1];
+    }
+}
+
+void mutate_plus(Individual *individual)
+{
+    if ((double)rand() / RAND_MAX < 0.1)
+    {
+        int num_reversals = rand() % 3 + 1; // Escolha aleatoriamente entre 1, 2 ou 3 índices para inverter
+        for (int i = 0; i < num_reversals; i++)
+        {
+            int start = rand() % (N - 2) + 1; // Ignorar o ponto de partida e o último ponto
+            int end = start + 1;
+            int temp = individual->path[start];
+            individual->path[start] = individual->path[end];
+            individual->path[end] = temp;
+        }
+    }
+}
+
 // Realiza mutação em um indivíduo
 void mutate(Individual *individual)
 {
     if ((double)rand() / RAND_MAX < MUTATION_RATE)
     {
+        printf("x-man\n");
         int start = rand() % (N - 1) + 1; // Ignorar o ponto de partida
         int end = rand() % (N - 1) + 1;   // Ignorar o ponto de partida
         if (start > end)
