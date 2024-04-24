@@ -59,7 +59,7 @@ int encontrarProximoPontoMaisProximo(CoordenadaEstrela *coordenadas, bool *visit
 // Função para encontrar a rota usando o algoritmo guloso
 void algoritmoGulosoVizinhoMaisProximo(CoordenadaEstrela *coordenadas, int tamanho, int *caminho, float *distanciaTotal)
 {
-    bool *visitado = calloc(tamanho, sizeof(bool));
+    bool *visitado = (bool *)calloc(tamanho, sizeof(bool));
     int pontoAtual = 0;
 
     visitado[pontoAtual] = true;
@@ -107,7 +107,7 @@ CoordenadaEstrela *lerCoordenadas(const char *nomeArquivo, int *tamanho)
     rewind(arquivo); // Voltar ao início do arquivo
 
     // Alocar dinamicamente o vetor de coordenadas
-    CoordenadaEstrela *coordenadas = malloc(linhas * sizeof(CoordenadaEstrela));
+    CoordenadaEstrela *coordenadas = (CoordenadaEstrela *)malloc(linhas * sizeof(CoordenadaEstrela));
     if (coordenadas == NULL)
     {
         perror("Erro ao alocar memória");
@@ -138,9 +138,9 @@ int main()
 {
     // TESTANDO OBTENCAO DE COORDENADAS
 
-    const char *nomeArquivo = "/Users/yurigetaruck/Documents/faculdade/TCC/coordenadas/hyg109399.xyz.txt";
-    int tamanho = 109399; // Altere de acordo com o número total de coordenadas no arquivo
-    CoordenadaEstrela *coordenadas = malloc(tamanho * sizeof(CoordenadaEstrela));
+    const char *nomeArquivo = "C:\\Users\\Getaruck\\Documents\\TCC\\coordenadas\\star100.xyz.txt";
+    int tamanho = 100; // Altere de acordo com o número total de coordenadas no arquivo
+    CoordenadaEstrela *coordenadas = (CoordenadaEstrela *)malloc(tamanho * sizeof(CoordenadaEstrela));
 
     if (coordenadas == NULL)
     {
