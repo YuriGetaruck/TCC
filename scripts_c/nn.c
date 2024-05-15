@@ -138,8 +138,8 @@ int main()
 {
     // TESTANDO OBTENCAO DE COORDENADAS
 
-    const char *nomeArquivo = "C:\\Users\\Getaruck\\Documents\\TCC\\coordenadas\\star100.xyz.txt";
-    int tamanho = 100; // Altere de acordo com o número total de coordenadas no arquivo
+    const char *nomeArquivo = "C:\\Users\\Getaruck\\Documents\\TCC\\coordenadas\\star1k.xyz.txt";
+    int tamanho = 1000; // Altere de acordo com o número total de coordenadas no arquivo
     CoordenadaEstrela *coordenadas = (CoordenadaEstrela *)malloc(tamanho * sizeof(CoordenadaEstrela));
 
     if (coordenadas == NULL)

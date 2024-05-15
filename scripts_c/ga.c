@@ -4,7 +4,7 @@
 #include <stdbool.h>
 #include <string.h>
 
-#define N 100                // número de pontos 3D
+#define N 1000               // número de pontos 3D
 #define POP_SIZE 30          // tamanho da população
 #define MUTATION_RATE 0.08   // taxa de mutação
 #define ITERATIONS 1000000   // número de iterações
@@ -176,7 +176,6 @@ void mutate(Individual *individual)
 {
     if ((double)rand() / RAND_MAX < MUTATION_RATE)
     {
-        printf("x-man\n");
         int start = rand() % (N - 1) + 1; // Ignorar o ponto de partida
         int end = rand() % (N - 1) + 1;   // Ignorar o ponto de partida
         if (start > end)
@@ -267,7 +266,7 @@ int main()
 {
 
     // Carregar coordenadas do arquivo
-    const char *nome_arquivo = "C:\\Users\\Getaruck\\Documents\\TCC\\coordenadas\\star100.xyz.txt";
+    const char *nome_arquivo = "C:\\Users\\Getaruck\\Documents\\TCC\\coordenadas\\star1k.xyz.txt";
     Point points[N];
     ler_coordenadas(nome_arquivo, points);
 
