@@ -6,9 +6,9 @@
 
 // Variaveis globais para gerarGrid
 
-float mutation_rate = 0.08;
+float mutation_rate = 0.05;
 int pop_size = 30;
-int iterations = 100;
+int iterations = 100000;
 int n = 100;
 float target_distance = 1800;
 
@@ -264,7 +264,13 @@ void ler_coordenadas(const char *nome_arquivo, Point points[])
     fclose(arquivo);
 }
 
-void ga()
+// Função para calcular e imprimir a taxa de convergência
+double taxa_convergencai(double best_fitness[])
+{
+    return (best_fitness[iterations - 1] - best_fitness[0]) / best_fitness[0];
+}
+
+double ga()
 {
     // Carregar coordenadas do arquivo
     const char *nome_arquivo = "..\\coordenadas\\star100.xyz.txt";
@@ -275,7 +281,10 @@ void ga()
     Individual population[pop_size];
     initialize_population(population, points);
 
-    // No loop principal, ajuste o controle de parada
+    // Array para armazenar o fitness do melhor indivíduo em cada geração
+    double best_fitness[iterations];
+
+    // Loop pricipal
     for (int i = 0; i < iterations; i++)
     {
         if (evolve_population(population, points))
@@ -283,15 +292,20 @@ void ga()
             printf("Parada atingida: caminho menor que %.2f encontrado\n", target_distance);
             break;
         }
+
+        // Encontrar o melhor indivíduo da geração atual
+        Individual best_individual = find_best_individual(population);
+        best_fitness[i] = best_individual.fitness;
+
         if (i % 1000 == 0)
         {
+
             printf("Iteracao: %d\n", i);
-            Individual best_individual = find_best_individual(population);
             printf("Comprimento do melhor caminho: %.2f\n", best_individual.fitness);
             printf("Caminho:\n");
-            for (int i = 0; i < n; i++)
+            for (int j = 0; j < n; j++)
             {
-                printf("%d ", best_individual.path[i]);
+                printf("%d ", best_individual.path[j]);
             }
             printf("\n");
         }
@@ -310,23 +324,60 @@ void ga()
 
     // Imprimir o comprimento do melhor caminho encontrado
     printf("Comprimento do melhor caminho: %.2f\n", best_individual.fitness);
+
+    // Imprimir a taxa de convergência
+    return taxa_convergencai(best_fitness);
+}
+
+void gravarLog(char msg[])
+{
+    FILE *file = fopen("log_ga.txt", "a"); // "a" para abrir em modo append (adicionar no final)
+    if (file == NULL)
+    {
+        perror("Erro ao abrir o arquivo de log");
+        return;
+    }
+
+    fprintf(file, msg);
+    fclose(file);
 }
 
 void gerarGrid(int popSizeMin, int popSizeMax, float mutationRateMin, float mutationRateMax)
 {
-    for (int i = popSizeMin; i < popSizeMax; i++)
+    int best_pop;
+    double best_mutation;
+    double best_taxa = 100;
+
+    for (int i = popSizeMin; i < popSizeMax; i += 10)
     {
         pop_size = i;
         for (float j = mutationRateMin; j < mutationRateMax; j += 0.01)
         {
             mutation_rate = j;
-            ga();
+            double taxa = ga();
+            char msg[300];
+            sprintf(msg, "[popSize:%d, mutationRate:%f] taxa de convergencia = %.6f\n", i, j, taxa);
+
+            gravarLog(msg);
+
+            if (taxa < best_taxa)
+            {
+                best_taxa = taxa;
+                best_pop = i;
+                best_mutation = j;
+            }
         }
     }
+
+    char msg_best[200];
+    sprintf(msg_best, "Melhor combinacao: pop_size = %d , mutation_rate = %f  \nconvergencia = %.6f", best_pop, best_mutation, best_taxa);
+    gravarLog(msg_best);
 }
 
 int main()
 {
-    gerarGrid(5, 30, 0.00, 0.15);
+    // gerarGrid(10, 150, 0.01, 0.10);
+
+    ga();
     return 0;
 }
