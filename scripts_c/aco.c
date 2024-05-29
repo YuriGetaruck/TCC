@@ -37,7 +37,7 @@ void ler_coordenadas(const char *nome_arquivo, Point points[])
     }
     int id;
     double x, y, z;
-    for (int i = 0; i < N; i++)
+    for (int i = 0; i < n; i++)
     {
         fscanf(arquivo, "%lf %lf %lf", &x, &y, &z);
         points[i].id = i;
@@ -51,9 +51,9 @@ void ler_coordenadas(const char *nome_arquivo, Point points[])
 // Função para inicializar os feromônios entre os pontos
 void init_pheromones(double **pheromones)
 {
-    for (int i = 0; i < N; i++)
+    for (int i = 0; i < n; i++)
     {
-        for (int j = 0; j < N; j++)
+        for (int j = 0; j < n; j++)
         {
             pheromones[i][j] = 1.0; // Valor inicial de feromônio
         }
@@ -64,10 +64,10 @@ void init_pheromones(double **pheromones)
 int choose_next_point(bool *visited, int current_point, double **pheromones, Point *points)
 {
     double total_prob = 0.0;
-    double probabilities[N];
+    double probabilities[n];
 
     // Calcular a soma total das probabilidades para normalização
-    for (int i = 0; i < N; i++)
+    for (int i = 0; i < n; i++)
     {
         if (!visited[i])
         {
@@ -83,7 +83,7 @@ int choose_next_point(bool *visited, int current_point, double **pheromones, Poi
     // Escolher o próximo ponto com base nas probabilidades calculadas
     double r = ((double)rand() / RAND_MAX) * total_prob;
     double cumulative_prob = 0.0;
-    for (int i = 0; i < N; i++)
+    for (int i = 0; i < n; i++)
     {
         if (!visited[i])
         {
@@ -96,7 +96,7 @@ int choose_next_point(bool *visited, int current_point, double **pheromones, Poi
     }
 
     // Se algo der errado, apenas retorne o próximo ponto não visitado
-    for (int i = 0; i < N; i++)
+    for (int i = 0; i < n; i++)
     {
         if (!visited[i])
         {
@@ -122,23 +122,23 @@ double calc_dist(Point *path, int n)
 // Função principal para resolver o TSP usando colônia de formigas
 void solve_tsp(Point *points)
 {
-    double **pheromones = malloc(N * sizeof(double *));
-    for (int i = 0; i < N; i++)
+    double **pheromones = malloc(n * sizeof(double *));
+    for (int i = 0; i < n; i++)
     {
-        pheromones[i] = malloc(N * sizeof(double));
+        pheromones[i] = malloc(n * sizeof(double));
     }
     init_pheromones(pheromones);
 
-    Point *best_path = malloc(N * sizeof(Point));
+    Point *best_path = malloc(n * sizeof(Point));
     double best_distance = INF;
 
     for (int iter = 0; iter < MAX_ITER; iter++)
     {
         // Implemente o movimento das formigas entre os pontos aqui
-        for (int ant = 0; ant < N; ant++)
+        for (int ant = 0; ant < n; ant++)
         {
-            bool *visited = malloc(N * sizeof(bool));
-            for (int i = 0; i < N; i++)
+            bool *visited = malloc(n * sizeof(bool));
+            for (int i = 0; i < n; i++)
             {
                 visited[i] = false;
             }
@@ -146,7 +146,7 @@ void solve_tsp(Point *points)
             int current_point = 0; // Começando do ponto 0
             visited[current_point] = true;
 
-            for (int step = 1; step < N; step++)
+            for (int step = 1; step < n; step++)
             {
                 int next_point = choose_next_point(visited, current_point, pheromones, points);
                 // Atualize a trilha de feromônio entre current_point e next_point
@@ -158,11 +158,11 @@ void solve_tsp(Point *points)
         // Atualize os feromônios na trilha
 
         // Encontre a melhor solução até agora
-        double current_distance = calc_dist(points, N);
+        double current_distance = calc_dist(points, n);
         if (current_distance < best_distance)
         {
             best_distance = current_distance;
-            for (int i = 0; i < N; i++)
+            for (int i = 0; i < n; i++)
             {
                 best_path[i] = points[i];
             }
@@ -179,7 +179,7 @@ void solve_tsp(Point *points)
 
     // Imprima a melhor solução encontrada
     printf("Melhor caminho encontrado:\n");
-    for (int i = 0; i < N; i++)
+    for (int i = 0; i < n; i++)
     {
         printf("ID: %d, X: %.6f, Y: %.6f, Z: %.6f\n", best_path[i].id, best_path[i].x, best_path[i].y, best_path[i].z);
     }
@@ -187,7 +187,7 @@ void solve_tsp(Point *points)
 
     // Libere a memória alocada
     free(best_path);
-    for (int i = 0; i < N; i++)
+    for (int i = 0; i < n; i++)
     {
         free(pheromones[i]);
     }
@@ -196,8 +196,8 @@ void solve_tsp(Point *points)
 
 int main()
 {
-    Point points[N];
-    ler_coordenadas("C:\\Users\\Getaruck\\Documents\\TCC\\coordenadas\\star1k.xyz.txt", points); // Substitua "pontos.txt" pelo nome do seu arquivo de pontos
+    Point points[n];
+    ler_coordenadas("..\\coordenadas\\star100.xyz.txt", points);
     solve_tsp(points);
     return 0;
 }

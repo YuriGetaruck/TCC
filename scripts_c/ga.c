@@ -4,11 +4,13 @@
 #include <stdbool.h>
 #include <string.h>
 
-#define N 1000               // número de pontos 3D
-#define POP_SIZE 30          // tamanho da população
-#define MUTATION_RATE 0.08   // taxa de mutação
-#define ITERATIONS 1000000   // número de iterações
-#define TARGET_DISTANCE 1800 // valor específico para o critério de parada
+// Variaveis globais para gerarGrid
+
+float mutation_rate = 0.08;
+int pop_size = 30;
+int iterations = 100;
+int n = 100;
+float target_distance = 1800;
 
 // Estrutura para representar um ponto 3D
 typedef struct
@@ -22,7 +24,7 @@ typedef struct
 // Estrutura para representar um indivíduo (caminho)
 typedef struct
 {
-    int path[N];
+    int path[100];
     double fitness;
 } Individual;
 
@@ -38,11 +40,11 @@ double distance(Point p1, Point p2)
 double calculate_fitness(Individual individual, Point points[])
 {
     double length = 0.0;
-    for (int i = 0; i < N - 1; i++)
+    for (int i = 0; i < n - 1; i++)
     {
         length += distance(points[individual.path[i]], points[individual.path[i + 1]]);
     }
-    length += distance(points[individual.path[N - 1]], points[individual.path[0]]); // fecha o ciclo
+    length += distance(points[individual.path[n - 1]], points[individual.path[0]]); // fecha o ciclo
     return length;
 }
 
@@ -50,16 +52,16 @@ double calculate_fitness(Individual individual, Point points[])
 void initialize_population(Individual population[], Point points[])
 {
     // Loop através de cada indivíduo na população
-    for (int i = 0; i < POP_SIZE; i++)
+    for (int i = 0; i < pop_size; i++)
     {
         // Inicializar caminho com ordem sequencial
-        for (int j = 0; j < N; j++)
+        for (int j = 0; j < n; j++)
         {
             population[i].path[j] = j;
         }
 
         // Embaralhar os pontos exceto o primeiro (ponto de partida)
-        for (int j = N - 1; j > 0; j--)
+        for (int j = n - 1; j > 0; j--)
         {
             // Gerar um índice aleatório dentro do intervalo [0, j]
             int k = rand() % (j + 1);
@@ -81,16 +83,16 @@ void initialize_population(Individual population[], Point points[])
 // Seleciona indivíduos para reprodução usando torneio binário
 Individual tournament_selection(Individual population[])
 {
-    Individual parent1 = population[rand() % POP_SIZE];
-    Individual parent2 = population[rand() % POP_SIZE];
+    Individual parent1 = population[rand() % pop_size];
+    Individual parent2 = population[rand() % pop_size];
     return (parent1.fitness < parent2.fitness) ? parent1 : parent2;
 }
 
 // Realiza o cruzamento entre dois indivíduos para gerar um novo indivíduo
 Individual crossover(Individual parent1, Individual parent2, Point *points)
 {
-    int start = rand() % N;
-    int end = rand() % N;
+    int start = rand() % n;
+    int end = rand() % n;
     if (start > end)
     {
         int temp = start;
@@ -98,7 +100,7 @@ Individual crossover(Individual parent1, Individual parent2, Point *points)
         end = temp;
     }
     Individual child;
-    for (int i = 0; i < N; i++)
+    for (int i = 0; i < n; i++)
     {
         if (i >= start && i <= end)
         {
@@ -110,7 +112,7 @@ Individual crossover(Individual parent1, Individual parent2, Point *points)
         }
     }
     int index = 0;
-    for (int i = 0; i < N; i++)
+    for (int i = 0; i < n; i++)
     {
         if (index == start)
         {
@@ -120,7 +122,7 @@ Individual crossover(Individual parent1, Individual parent2, Point *points)
         if (child.path[index] == -1)
         {
             bool contains = false;
-            for (int j = 0; j < N; j++)
+            for (int j = 0; j < n; j++)
             {
                 if (child.path[j] == gene)
                 {
@@ -141,12 +143,12 @@ Individual crossover(Individual parent1, Individual parent2, Point *points)
 // Realiza mutação por deslocamento simples em um indivíduo
 void mutate_deslocamento_simples(Individual *individual)
 {
-    if ((double)rand() / RAND_MAX < MUTATION_RATE)
+    if ((double)rand() / RAND_MAX < mutation_rate)
     {
-        int start = rand() % (N - 1) + 1;  // Ignorar o ponto de partida
-        int length = rand() % (N - start); // Comprimento do deslocamento
+        int start = rand() % (n - 1) + 1;  // Ignorar o ponto de partida
+        int length = rand() % (n - start); // Comprimento do deslocamento
 
-        int temp[N];
+        int temp[n];
         memcpy(temp, individual->path, sizeof(temp)); // Copia o caminho atual
 
         // Desloca a sub-rota em 'length' posições
@@ -162,7 +164,7 @@ void mutate_plus(Individual *individual)
         int num_reversals = rand() % 3 + 1; // Escolha aleatoriamente entre 1, 2 ou 3 índices para inverter
         for (int i = 0; i < num_reversals; i++)
         {
-            int start = rand() % (N - 2) + 1; // Ignorar o ponto de partida e o último ponto
+            int start = rand() % (n - 2) + 1; // Ignorar o ponto de partida e o último ponto
             int end = start + 1;
             int temp = individual->path[start];
             individual->path[start] = individual->path[end];
@@ -174,10 +176,10 @@ void mutate_plus(Individual *individual)
 // Realiza mutação em um indivíduo
 void mutate(Individual *individual)
 {
-    if ((double)rand() / RAND_MAX < MUTATION_RATE)
+    if ((double)rand() / RAND_MAX < mutation_rate)
     {
-        int start = rand() % (N - 1) + 1; // Ignorar o ponto de partida
-        int end = rand() % (N - 1) + 1;   // Ignorar o ponto de partida
+        int start = rand() % (n - 1) + 1; // Ignorar o ponto de partida
+        int end = rand() % (n - 1) + 1;   // Ignorar o ponto de partida
         if (start > end)
         {
             int temp = start;
@@ -198,24 +200,24 @@ void mutate(Individual *individual)
 // Evolui a população por uma geração e verifica o critério de parada
 bool evolve_population(Individual population[], Point points[])
 {
-    Individual new_population[POP_SIZE];
-    for (int i = 0; i < POP_SIZE; i++)
+    Individual new_population[pop_size];
+    for (int i = 0; i < pop_size; i++)
     {
         Individual parent1 = tournament_selection(population);
         Individual parent2 = tournament_selection(population);
         Individual child = crossover(parent1, parent2, points);
         mutate(&child);
         new_population[i] = child;
-        if (child.fitness < TARGET_DISTANCE)
+        if (child.fitness < target_distance)
         { // Verifica o critério de parada
-            for (int j = 0; j < POP_SIZE; j++)
+            for (int j = 0; j < pop_size; j++)
             {
                 population[j] = new_population[j];
             }
             return true;
         }
     }
-    for (int i = 0; i < POP_SIZE; i++)
+    for (int i = 0; i < pop_size; i++)
     {
         population[i] = new_population[i];
     }
@@ -226,7 +228,7 @@ bool evolve_population(Individual population[], Point points[])
 Individual find_best_individual(Individual population[])
 {
     Individual best_individual = population[0];
-    for (int i = 1; i < POP_SIZE; i++)
+    for (int i = 1; i < pop_size; i++)
     {
         if (population[i].fitness < best_individual.fitness)
         {
@@ -247,7 +249,7 @@ void ler_coordenadas(const char *nome_arquivo, Point points[])
     }
     int id;
     double x, y, z;
-    for (int i = 0; i < N; i++)
+    for (int i = 0; i < n; i++)
     {
         fscanf(arquivo, "%lf %lf %lf", &x, &y, &z);
         points[i].id = i;
@@ -255,31 +257,30 @@ void ler_coordenadas(const char *nome_arquivo, Point points[])
         points[i].y = y;
         points[i].z = z;
     }
-    for (int i = 0; i < N; i++)
+    for (int i = 0; i < n; i++)
     {
         printf("ID: %d, X: %.6f, Y: %.6f, Z: %.6f\n", points[i].id, points[i].x, points[i].y, points[i].z);
     }
     fclose(arquivo);
 }
 
-int main()
+void ga()
 {
-
     // Carregar coordenadas do arquivo
-    const char *nome_arquivo = "C:\\Users\\Getaruck\\Documents\\TCC\\coordenadas\\star1k.xyz.txt";
-    Point points[N];
+    const char *nome_arquivo = "..\\coordenadas\\star100.xyz.txt";
+    Point points[n];
     ler_coordenadas(nome_arquivo, points);
 
     // Inicializar a população
-    Individual population[POP_SIZE];
+    Individual population[pop_size];
     initialize_population(population, points);
 
     // No loop principal, ajuste o controle de parada
-    for (int i = 0; i < ITERATIONS; i++)
+    for (int i = 0; i < iterations; i++)
     {
         if (evolve_population(population, points))
         {
-            printf("Parada atingida: caminho menor que %.2f encontrado\n", TARGET_DISTANCE);
+            printf("Parada atingida: caminho menor que %.2f encontrado\n", target_distance);
             break;
         }
         if (i % 1000 == 0)
@@ -288,7 +289,7 @@ int main()
             Individual best_individual = find_best_individual(population);
             printf("Comprimento do melhor caminho: %.2f\n", best_individual.fitness);
             printf("Caminho:\n");
-            for (int i = 0; i < N; i++)
+            for (int i = 0; i < n; i++)
             {
                 printf("%d ", best_individual.path[i]);
             }
@@ -301,7 +302,7 @@ int main()
 
     // Imprimir o melhor caminho encontrado
     printf("Melhor caminho encontrado:\n");
-    for (int i = 0; i < N; i++)
+    for (int i = 0; i < n; i++)
     {
         printf("%d ", best_individual.path[i]);
     }
@@ -309,6 +310,23 @@ int main()
 
     // Imprimir o comprimento do melhor caminho encontrado
     printf("Comprimento do melhor caminho: %.2f\n", best_individual.fitness);
+}
 
+void gerarGrid(int popSizeMin, int popSizeMax, float mutationRateMin, float mutationRateMax)
+{
+    for (int i = popSizeMin; i < popSizeMax; i++)
+    {
+        pop_size = i;
+        for (float j = mutationRateMin; j < mutationRateMax; j += 0.01)
+        {
+            mutation_rate = j;
+            ga();
+        }
+    }
+}
+
+int main()
+{
+    gerarGrid(5, 30, 0.00, 0.15);
     return 0;
 }
